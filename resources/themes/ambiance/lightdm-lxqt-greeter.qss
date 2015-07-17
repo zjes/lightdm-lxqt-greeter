@@ -1,0 +1,19 @@
+#InfoPanel {
+    background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #515048, stop:1 #3C3B37);
+    background-origin: content;
+    height: 20;
+}
+
+#InfoPanel > #HostName {
+}
+
+#InfoPanel > #Clock {
+    font: bold;
+}
+
+#InfoPanel > #Keyboard > #CapsLock {
+}
+
+#InfoPanel > #Keyboard > #Layout {
+}
+

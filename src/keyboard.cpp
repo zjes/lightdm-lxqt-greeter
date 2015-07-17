@@ -5,20 +5,23 @@
 Keyboard::Keyboard(QWidget *parent):
     QWidget(parent)
 {
+    setObjectName("Keyboard");
+
     setLayout(new QHBoxLayout);
 
     layout()->setContentsMargins(0, 0, 0, 0);
     layout()->setSpacing(10);
 
-    m_caps = new QLabel("lay");
-    m_layout = new QLabel("caps");
+    m_caps = new QLabel;
+    m_caps->setObjectName("CapsLock");
+    m_layout = new QLabel;
+    m_layout->setObjectName("Layout");
 
     m_caps->setAlignment(Qt::AlignCenter);
     m_layout->setAlignment(Qt::AlignCenter);
 
     connect(&m_lay, &Layout::layoutChanged, [this](const QString & name){
         m_layout->setText(name);
-        qDebug() << "set text" << name;
     });
 
     connect(&m_lay, &Layout::capsChanged, [this](bool on){

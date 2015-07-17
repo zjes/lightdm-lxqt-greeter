@@ -23,6 +23,8 @@ public:
     QString clockFormat() const
     { return m_settings.value("appearance/clock-format", "dddd, dd MMMM, hh:mm").toString(); }
 
+
+
 private:
     Settings():
         m_settings("/etc/lightdm/lightdm-lxqt-greeter.conf", QSettings::IniFormat)

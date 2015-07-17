@@ -4,6 +4,7 @@
 
 Clock::Clock()
 {
+    setObjectName("Clock");
     m_timer.setInterval(1000);
     m_timer.setSingleShot(false);
     connect(&m_timer, &QTimer::timeout, this, &Clock::timeout);

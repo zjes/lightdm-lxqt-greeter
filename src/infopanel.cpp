@@ -11,18 +11,25 @@
 InfoPanel::InfoPanel(QWidget *parent):
     QWidget(parent)
 {
+    setObjectName("InfoPanel");
     setAutoFillBackground(true);
-    QPalette pal = palette();
+    /*QPalette pal = palette();
     pal.setColor(QPalette::Background, QColor(Settings::instance().panelBackground()));
     pal.setColor(QPalette::Foreground, QColor(Settings::instance().panelForeground()));
-    setPalette(pal);
+    setPalette(pal);*/
 
-    setLayout(new QHBoxLayout);
     setMinimumHeight(25);
-    layout()->addWidget(new QLabel(Greeter::hostName()));
-    layout()->addItem(new QSpacerItem(10, 10, QSizePolicy::Expanding, QSizePolicy::Minimum));
-    layout()->addWidget(new Clock);
-    layout()->addItem(new QSpacerItem(10, 10, QSizePolicy::Expanding, QSizePolicy::Minimum));
-    layout()->addWidget(new Keyboard);
+
+    QHBoxLayout *lay = new QHBoxLayout;
+
+    QLabel *host = new QLabel(Greeter::hostName());
+    host->setObjectName("HostName");
+    lay->addWidget(host);
+    lay->addStretch();
+    lay->addWidget(new Clock);
+    lay->addStretch();
+    lay->addWidget(new Keyboard);
+
+    setLayout(lay);
 }
 
