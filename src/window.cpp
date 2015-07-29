@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QFile>
 #include "settings.h"
 #include "infopanel.h"
 #include "login.h"
@@ -18,7 +19,7 @@ Window::Window(int screen, QWidget *parent):
     QRect screenRect = QApplication::desktop()->screenGeometry(screen);
     setGeometry(screenRect);
 
-/*    QString back = Settings::instance().background();
+    QString back = Settings::instance().background();
     if (back.startsWith("#")){
         QPalette pal = palette();
         pal.setColor(QPalette::Background, QColor(back));
@@ -26,7 +27,6 @@ Window::Window(int screen, QWidget *parent):
     } else if (!back.isEmpty() && QFile::exists(back)){
         qDebug() << "set background";
     }
-    */
 
     QVBoxLayout * lay = new QVBoxLayout;
 

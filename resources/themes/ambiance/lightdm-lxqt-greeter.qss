@@ -1,10 +1,11 @@
 #InfoPanel {
     background:qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #515048, stop:1 #3C3B37);
-    background-origin: content;
+    /*background-origin: content;*/
     height: 20;
 }
 
-#InfoPanel > #HostName {
+#InfoPanel > QLabel, #InfoPanel > #Keyboard > QLabel {
+    color: #dedede;
 }
 
 #InfoPanel > #Clock {
@@ -17,3 +18,20 @@
 #InfoPanel > #Keyboard > #Layout {
 }
 
+#Login {
+    border-radius: 5px;
+    background: #3C3B37;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #5e5e5e;
+}
+
+#Login > QLabel {
+    color: #dedede;
+}
+
+#Login > #UserImage {
+    border-width: 1px;
+    border-color: #5e5e5e;
+    border-style: solid;
+}

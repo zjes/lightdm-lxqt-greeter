@@ -3,9 +3,10 @@
 #include "login.h"
 #include "ui_login.h"
 #include "private/greeter.h"
+#include "settings.h"
 
 Login::Login(QWidget *parent) :
-    QWidget(parent),
+    QFrame(parent),
     m_ui(new Ui::Login)
 {
     m_ui->setupUi(this);
@@ -19,8 +20,9 @@ Login::Login(QWidget *parent) :
         m_ui->infoLbl->setVisible(false);
     });
 
-    connect(m_ui->loginEdt, &QLineEdit::editingFinished, this, &Login::setUser);
-    connect(m_ui->pwdEdt,   &QLineEdit::editingFinished, this, &Login::doLogin);
+    connect(m_ui->loginEdt, &QLineEdit::returnPressed,   this, &Login::setUser);
+    connect(m_ui->loginEdt, &QLineEdit::editingFinished, this, &Login::preSetUser);
+    connect(m_ui->pwdEdt,   &QLineEdit::returnPressed,   this, &Login::doLogin);
     connect(m_ui->loginBtn, &QPushButton::clicked,       this, &Login::doLogin);
     connect(m_ui->resetBtn, &QPushButton::clicked,       this, &Login::reset);
 
@@ -68,6 +70,12 @@ void Login::init()
 
     QString lastUser = m_greeter.users().selectUserHint();
     if (lastUser.isEmpty()){
+        for(const auto& user: m_greeter.users().users()){
+            if (user.second.loggedIn/* && user.second.name == Settings::instance().lastUser()*/)
+                lastUser = user.second.name;
+        }
+    }
+    if (lastUser.isEmpty()){
         m_ui->loginEdt->setFocus();
     } else {
         m_ui->loginEdt->setText(lastUser);
@@ -82,12 +90,26 @@ void Login::setUser()
 
     m_greeter.users().authenticate(m_ui->loginEdt->text());
     m_ui->loginEdt->setEnabled(false);
+    Settings::instance().setLastUser(m_ui->loginEdt->text());
+
+}
+
+void Login::preSetUser()
+{
+    m_ui->pwdEdt->clear();
+    m_ui->pwdEdt->setEnabled(true);
+    m_ui->pwdEdt->setFocus();
 }
 
 void Login::doLogin()
 {
+    if (m_ui->loginEdt->isEnabled()){
+        setUser();
+    }
+
     m_greeter.users().authorize(m_ui->pwdEdt->text());
     m_ui->pwdEdt->clear();
+    m_ui->pwdEdt->setEnabled(false);
 }
 
 void Login::authenticationComplete()
@@ -98,6 +120,7 @@ void Login::authenticationComplete()
         m_greeter.session().start(m_ui->sessionCmb->currentData().value<Session::Info>().key);
     } else {
         showInfo("Not authenticated");
+        qDebug() << "Not authenticated";
         m_ui->pwdEdt->clear();
         m_ui->pwdEdt->setEnabled(false);
         m_ui->loginEdt->setEnabled(true);

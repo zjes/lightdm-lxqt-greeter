@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QWidget>
+#include <QFrame>
 #include <QLabel>
 #include <QTimer>
 #include "private/greeter.h"
@@ -8,7 +8,7 @@
 namespace Ui
 { class Login; }
 
-class Login : public QWidget
+class Login : public QFrame
 {
     Q_OBJECT
 public:
@@ -18,6 +18,7 @@ private:
     void styleIt();
     void init();
     void setUser();
+    void preSetUser();
     void doLogin();
     void reset();
     void authenticationComplete();

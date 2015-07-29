@@ -1,8 +1,8 @@
 #pragma once
 
-#include <QWidget>
+#include <QFrame>
 
-class InfoPanel : public QWidget
+class InfoPanel : public QFrame
 {
     Q_OBJECT
 public:

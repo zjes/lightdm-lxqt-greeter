@@ -1,5 +1,6 @@
 #include "lightdm/greeter.h"
 #include "lightdm/system.h"
+#include <QDebug>
 #include "greeter.h"
 #include "greeterimpl.h"
 
@@ -16,6 +17,7 @@ bool Greeter::connectToLightDM()
 {
     if(lightdm_greeter_connect_to_daemon_sync(m_pimpl->greeter(), NULL)){
         lightdm_greeter_set_resettable(m_pimpl->greeter(), true);
+        qDebug() << QString::fromUtf8(lightdm_greeter_get_hint(m_pimpl->greeter(), "LightDM/cache-directory"));
         return true;
     }
     return false;

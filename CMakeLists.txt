@@ -14,7 +14,7 @@ pkg_check_modules(GOBJECT        REQUIRED gobject-2.0)
 pkg_check_modules(XKB_COMMON_X11 REQUIRED xkbcommon-x11)
 pkg_check_modules(XCB_XCB        REQUIRED xcb-xkb)
 
-include(${LXQT_USE_FILE})
+#include(${LXQT_USE_FILE})
 include_directories(${LIGHTDM_INCLUDE_DIRS})
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -55,6 +55,7 @@ target_link_libraries(${PROJECT_NAME}
     ${XKB_COMMON_X11_LIBRARIES}
     ${XCB_XCB_LIBRARIES}
     ${LXQT_LIBRARIES}
+    lxqt
 )
 
 qt5_use_modules(${PROJECT_NAME} Widgets)

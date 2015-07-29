@@ -9,11 +9,11 @@
 #include "keyboard.h"
 
 InfoPanel::InfoPanel(QWidget *parent):
-    QWidget(parent)
+    QFrame(parent)
 {
     setObjectName("InfoPanel");
-    setAutoFillBackground(true);
-    /*QPalette pal = palette();
+    /*setAutoFillBackground(true);
+    QPalette pal = palette();
     pal.setColor(QPalette::Background, QColor(Settings::instance().panelBackground()));
     pal.setColor(QPalette::Foreground, QColor(Settings::instance().panelForeground()));
     setPalette(pal);*/
