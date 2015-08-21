@@ -4,6 +4,8 @@
 #include "greeter.h"
 #include "greeterimpl.h"
 
+namespace priv {
+
 Greeter::Greeter():
     m_pimpl(new pimpl::Greeter(this)),
     m_users(*this),
@@ -25,3 +27,5 @@ bool Greeter::connectToLightDM()
 
 QString Greeter::hostName()
 { return QString::fromUtf8(lightdm_get_hostname()); }
+
+}

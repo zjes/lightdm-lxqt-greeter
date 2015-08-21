@@ -11,7 +11,7 @@
 
 #include "layout.h"
 
-namespace pimpl {
+namespace priv { namespace pimpl {
 
 class X11Kbd: public QAbstractNativeEventFilter
 {
@@ -173,4 +173,6 @@ uint Layout::calcMinimalLayoutWidth(const QFont & font)
             max = w;
     }
     return max;
+}
+
 }

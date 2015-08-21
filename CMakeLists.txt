@@ -37,6 +37,8 @@ add_executable(${PROJECT_NAME}
     src/infopanel.cpp
     src/login.h
     src/login.cpp
+    src/power.h
+    src/power.cpp
     src/private/layout.h
     src/private/layout.cpp
     src/private/greeter.h
@@ -46,6 +48,8 @@ add_executable(${PROJECT_NAME}
     src/private/user.cpp
     src/private/session.h
     src/private/session.cpp
+    src/private/power.h
+    src/private/power.cpp
     ${UIC}
 )
 

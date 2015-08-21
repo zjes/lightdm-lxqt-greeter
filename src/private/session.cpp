@@ -1,6 +1,9 @@
 #include "lightdm/session.h"
 #include "greeterimpl.h"
 #include "session.h"
+#include "../settings.h"
+
+namespace priv {
 
 Session::Session(Greeter & greeter):
     m_greeter(greeter)
@@ -37,5 +40,12 @@ QList<Session::Info> Session::sessions(Type type)
 bool Session::start(const QString &session)
 { return lightdm_greeter_start_session_sync(m_greeter.m_pimpl->greeter(), qPrintable(session), NULL); }
 
-QString Session::hint() const
-{ return QString::fromUtf8(lightdm_greeter_get_default_session_hint(m_greeter.m_pimpl->greeter())); }
+QString Session::hint(const QString& user) const
+{
+    QString sess = Settings::instance().lastUserSession(user);
+    if(sess.isEmpty())
+        sess = QString::fromUtf8(lightdm_greeter_get_default_session_hint(m_greeter.m_pimpl->greeter()));
+    return sess;
+}
+
+}

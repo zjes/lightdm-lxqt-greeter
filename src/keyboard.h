@@ -9,7 +9,7 @@ class Keyboard: public QWidget
 public:
     Keyboard(QWidget *parent = 0);
 private:
-    Layout  m_lay;
-    QLabel *m_caps;
-    QLabel *m_layout;
+    priv::Layout m_lay;
+    QLabel      *m_caps;
+    QLabel      *m_layout;
 };

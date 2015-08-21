@@ -21,15 +21,8 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     LxQt::LxQtTheme theme = currentTheme();
-    QFile qss(theme.path()+"/lightdm-lxqt-greeter.qss");
-    if(qss.exists()){
-        if (qss.open(QIODevice::ReadOnly)){
-            QString qssCnt = qss.readAll();
-            app.setStyleSheet(qssCnt);
-            qss.close();
-        } else {
-            qDebug() << qss.errorString();
-        }
+    if(QFile::exists(theme.path()+"/lightdm-lxqt-greeter.qss")){
+        app.setStyleSheet( "file:///" + theme.path()+"/lightdm-lxqt-greeter.qss");
     }
 
     //for (int i = 0; i < QApplication::desktop()->screenCount(); ++i){

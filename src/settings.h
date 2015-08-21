@@ -29,28 +29,28 @@ public:
 
 public:
     QString lastUser() const
-    { return m_settings.value("cache/last-user", "").toString(); }
+    { return m_cache.value("greeter/last-user", "").toString(); }
 
     void setLastUser(const QString& user)
     {
-        m_settings.setValue("cache/last-user", user);
-        m_settings.sync();
-        qDebug() << m_settings.status();
+        m_cache.setValue("greeter/last-user", user);
+        m_cache.sync();
+        qDebug() << "status:" << m_settings.status();
     }
 
     QString lastUserSession(const QString& user) const
-    { return m_settings.value("cache/last-"+user+"-session", "").toString(); }
+    { return m_cache.value("greeter/last-"+user+"-session", "").toString(); }
 
     void setLastUserSession(const QString& user, const QString& session)
     {
-        m_settings.setValue("cache/last-"+user+"-session", session);
-        m_settings.sync();
+        m_cache.setValue("greeter/last-"+user+"-session", session);
+        m_cache.sync();
     }
 
 private:
     Settings():
         m_settings("/etc/lightdm/lightdm-lxqt-greeter.conf", QSettings::IniFormat),
-        m_cache("/etc/lightdm/lightdm-lxqt-greeter.conf", QSettings::IniFormat)
+        m_cache("/var/lib/lightdm/.cache/lightdm-lxqt-greeter/state", QSettings::IniFormat)
     {}
 
     QSettings m_settings;

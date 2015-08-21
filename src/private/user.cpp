@@ -5,6 +5,9 @@
 #include "user.h"
 #include "greeter.h"
 #include "greeterimpl.h"
+#include "../settings.h"
+
+namespace priv {
 
 Users::Users(Greeter & greeter):
     m_greeter(greeter)
@@ -42,8 +45,13 @@ const std::map<QString, Users::User> & Users::users()
     return users;
 }
 
-QString Users::selectUserHint() const
-{ return QString::fromUtf8(lightdm_greeter_get_select_user_hint(m_greeter.m_pimpl->greeter())); }
+QString Users::hint() const
+{
+    QString user = QString::fromUtf8(lightdm_greeter_get_select_user_hint(m_greeter.m_pimpl->greeter()));
+    if (user.isEmpty())
+        return Settings::instance().lastUser();
+    return user;
+}
 
 bool Users::inAuthentication() const
 { return lightdm_greeter_get_in_authentication(m_greeter.m_pimpl->greeter()); }
@@ -73,3 +81,5 @@ const Users::User & Users::authenticationUser() const
 
 QString Users::sharedDataDirSync(const QString &username)
 { return QString::fromUtf8(lightdm_greeter_ensure_shared_data_dir_sync(m_greeter.m_pimpl->greeter(), qPrintable(username))); }
+
+}

@@ -3,12 +3,12 @@
 #include "lightdm/greeter.h"
 #include "greeter.h"
 
-namespace pimpl {
+namespace priv { namespace pimpl {
 
 class Greeter
 {
 public:
-    typedef ::Greeter Public;
+    typedef priv::Greeter Public;
     Greeter(Public *pub):
         m_pub(pub)
     {
@@ -55,7 +55,7 @@ public:
     { return m_ldmGreeter; }
 private:
     LightDMGreeter *m_ldmGreeter;
-    ::Greeter      *m_pub;
+    priv::Greeter  *m_pub;
 };
 
-}
+}}

@@ -2,6 +2,9 @@
 #include <QMap>
 #include <QScopedPointer>
 
+
+namespace priv {
+
 namespace pimpl
 { class X11Kbd; }
 
@@ -52,3 +55,4 @@ private:
     QScopedPointer<pimpl::X11Kbd> m_pimpl;
 };
 
+}

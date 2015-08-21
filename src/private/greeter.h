@@ -5,6 +5,8 @@
 #include "user.h"
 #include "session.h"
 
+namespace priv {
+
 namespace pimpl
 { class Greeter; }
 
@@ -50,4 +52,4 @@ private:
     Session                        m_session;
 };
 
-
+}

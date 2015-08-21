@@ -20,11 +20,11 @@ Keyboard::Keyboard(QWidget *parent):
     m_caps->setAlignment(Qt::AlignCenter);
     m_layout->setAlignment(Qt::AlignCenter);
 
-    connect(&m_lay, &Layout::layoutChanged, [this](const QString & name){
+    connect(&m_lay, &priv::Layout::layoutChanged, [this](const QString & name){
         m_layout->setText(name);
     });
 
-    connect(&m_lay, &Layout::capsChanged, [this](bool on){
+    connect(&m_lay, &priv::Layout::capsChanged, [this](bool on){
         m_caps->setText(on ? "Caps ON" : "Caps OFF");
     });
 

@@ -12,7 +12,6 @@ Login::Login(QWidget *parent) :
     m_ui->setupUi(this);
 
     m_ui->infoLbl->setVisible(false);
-    m_ui->pwdEdt->setEnabled(false);
 
     m_infoTimer.setInterval(5000);
     m_infoTimer.setSingleShot(true);
@@ -20,17 +19,16 @@ Login::Login(QWidget *parent) :
         m_ui->infoLbl->setVisible(false);
     });
 
-    connect(m_ui->loginEdt, &QLineEdit::returnPressed,   this, &Login::setUser);
-    connect(m_ui->loginEdt, &QLineEdit::editingFinished, this, &Login::preSetUser);
+    connect(m_ui->loginEdt, &QLineEdit::editingFinished, this, &Login::setUser);
     connect(m_ui->pwdEdt,   &QLineEdit::returnPressed,   this, &Login::doLogin);
     connect(m_ui->loginBtn, &QPushButton::clicked,       this, &Login::doLogin);
     connect(m_ui->resetBtn, &QPushButton::clicked,       this, &Login::reset);
 
 
-    connect(&m_greeter, &Greeter::showMessage,            this, &Login::showMessage);
-    connect(&m_greeter, &Greeter::showPrompt,             this, &Login::showPrompt);
-    connect(&m_greeter, &Greeter::authenticationComplete, this, &Login::authenticationComplete);
-    connect(&m_greeter, &Greeter::reset,                  this, &Login::greeterReseted);
+    connect(&m_greeter, &priv::Greeter::showMessage,            this, &Login::showMessage);
+    connect(&m_greeter, &priv::Greeter::showPrompt,             this, &Login::showPrompt);
+    connect(&m_greeter, &priv::Greeter::authenticationComplete, this, &Login::authenticationComplete);
+    connect(&m_greeter, &priv::Greeter::reset,                  this, &Login::greeterReseted);
 
     styleIt();
     init();
@@ -58,72 +56,67 @@ void Login::init()
         return;
     }
 
-    QString sessionHint = m_greeter.session().hint();
-    int index = 0;
-    for(const Session::Info& sess: Session::sessions(Session::Type::Local)){
+    for(const priv::Session::Info& sess: priv::Session::sessions(priv::Session::Type::Local)){
         m_ui->sessionCmb->addItem(sess.name, QVariant::fromValue(sess));
-        if (!sessionHint.isEmpty() && sess.key == sessionHint){
-            m_ui->sessionCmb->setCurrentIndex(index);
-        }
-        ++index;
     }
 
-    QString lastUser = m_greeter.users().selectUserHint();
+    QString lastUser = m_greeter.users().hint();
     if (lastUser.isEmpty()){
         for(const auto& user: m_greeter.users().users()){
-            if (user.second.loggedIn/* && user.second.name == Settings::instance().lastUser()*/)
+            if (user.second.loggedIn && user.second.name == Settings::instance().lastUser())
                 lastUser = user.second.name;
         }
     }
+
     if (lastUser.isEmpty()){
         m_ui->loginEdt->setFocus();
     } else {
+        selectUserSession(lastUser);
         m_ui->loginEdt->setText(lastUser);
-        setUser();
+        m_ui->pwdEdt->setFocus();
     }
 }
 
 void Login::setUser()
 {
-    if (m_greeter.users().inAuthentication())
-        m_greeter.users().cancelAuthentication();
-
-    m_greeter.users().authenticate(m_ui->loginEdt->text());
-    m_ui->loginEdt->setEnabled(false);
-    Settings::instance().setLastUser(m_ui->loginEdt->text());
-
+    selectUserSession(m_ui->loginEdt->text());
 }
 
-void Login::preSetUser()
+void Login::selectUserSession(const QString& user)
 {
-    m_ui->pwdEdt->clear();
-    m_ui->pwdEdt->setEnabled(true);
-    m_ui->pwdEdt->setFocus();
+    QString sessionHint = m_greeter.session().hint(user);
+    for(int i = 0; i < m_ui->sessionCmb->count(); ++i){
+        QString session = m_ui->sessionCmb->itemData(i).value<priv::Session::Info>().key;
+        if (session == sessionHint){
+            m_ui->sessionCmb->setCurrentIndex(i);
+            break;
+        }
+    }
 }
 
 void Login::doLogin()
 {
-    if (m_ui->loginEdt->isEnabled()){
-        setUser();
-    }
+    if (m_greeter.users().inAuthentication())
+        m_greeter.users().cancelAuthentication();
 
-    m_greeter.users().authorize(m_ui->pwdEdt->text());
-    m_ui->pwdEdt->clear();
-    m_ui->pwdEdt->setEnabled(false);
+    m_greeter.users().authenticate(m_ui->loginEdt->text());
 }
 
 void Login::authenticationComplete()
 {
     if (m_greeter.users().isAuthenticated()) {
-        qDebug() << "Authenticated... starting session" << m_ui->sessionCmb->currentData().value<Session::Info>().name;
+        qDebug() << "Authenticated... starting session" << m_ui->sessionCmb->currentData().value<priv::Session::Info>().name;
+        QString session = m_ui->sessionCmb->currentData().value<priv::Session::Info>().key;
+
+        Settings::instance().setLastUser(m_ui->loginEdt->text());
+        Settings::instance().setLastUserSession(m_ui->loginEdt->text(), session);
+
         m_greeter.users().sharedDataDirSync(m_ui->loginEdt->text());
-        m_greeter.session().start(m_ui->sessionCmb->currentData().value<Session::Info>().key);
+        m_greeter.session().start(session);
     } else {
         showInfo("Not authenticated");
         qDebug() << "Not authenticated";
         m_ui->pwdEdt->clear();
-        m_ui->pwdEdt->setEnabled(false);
-        m_ui->loginEdt->setEnabled(true);
         setUser();
     }
 }
@@ -135,30 +128,31 @@ void Login::showInfo(const QString& txt)
     m_infoTimer.start();
 }
 
-void Login::showMessage(const QString & msg, Greeter::Message /*type*/)
+void Login::showMessage(const QString & msg, priv::Greeter::Message /*type*/)
 {
     showInfo(msg);
 }
 
-void Login::showPrompt(const QString & /*prompt*/, Greeter::Prompt type)
+void Login::showPrompt(const QString & /*prompt*/, priv::Greeter::Prompt type)
 {
-    if (type != Greeter::Prompt::TypeSecret){
-        m_ui->loginEdt->setText("");
-        m_ui->loginEdt->setEnabled(true);
+    if (type != priv::Greeter::Prompt::TypeSecret){
+        m_ui->loginEdt->clear();
+        m_ui->pwdEdt->clear();
         m_ui->loginEdt->setFocus();
     } else {
-        m_ui->pwdEdt->setEnabled(true);
-        m_ui->pwdEdt->setFocus();
+        if(!m_ui->pwdEdt->text().isEmpty()){
+            m_greeter.users().authorize(m_ui->pwdEdt->text());
+        } else {
+            m_ui->pwdEdt->setFocus();
+        }
     }
 }
 
 void Login::greeterReseted()
 {
-    m_ui->loginEdt->setText("");
-    m_ui->pwdEdt->setText("");
-    m_ui->loginEdt->setEnabled(true);
+    m_ui->loginEdt->clear();
+    m_ui->pwdEdt->clear();
     m_ui->loginEdt->setFocus();
-    m_ui->pwdEdt->setEnabled(false);
 }
 
 void Login::reset()

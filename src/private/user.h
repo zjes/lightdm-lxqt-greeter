@@ -3,6 +3,8 @@
 #include <QMap>
 #include <QVariant>
 
+namespace priv {
+
 class Greeter;
 
 class Users
@@ -27,7 +29,7 @@ public:
 public:
     static const std::map<QString, User> & users();
 public:
-    QString selectUserHint() const;
+    QString hint() const;
     void authenticate(const QString& user);
     bool isAuthenticated() const;
     void cancelAuthentication();
@@ -40,4 +42,6 @@ private:
     Greeter & m_greeter;
 };
 
-Q_DECLARE_METATYPE(Users::User)
+}
+
+Q_DECLARE_METATYPE(priv::Users::User)
